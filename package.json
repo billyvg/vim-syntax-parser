@@ -1,0 +1,42 @@
+{
+  "name": "vim-syntax-parser",
+  "version": "0.0.1",
+  "description": "js syntax parser for vim",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/billyvg/vim-syntax-parser.git"
+  },
+  "keywords": [
+    "vim",
+    "js",
+    "javascript"
+  ],
+  "author": "Billy Vong <billy at mmo.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/billyvg/vim-syntax-parser/issues"
+  },
+  "homepage": "https://github.com/billyvg/vim-syntax-parser#readme",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.10.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-1": "^6.5.0",
+    "eslint": "^2.10.2",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.10.3",
+    "eslint-plugin-jsx-a11y": "^1.2.0",
+    "eslint-plugin-react": "^5.2.2",
+    "mocha": "^2.5.3"
+  },
+  "dependencies": {
+    "babel-traverse": "^6.10.4",
+    "babylon": "^6.8.4",
+    "lodash": "^4.13.1"
+  }
+}
