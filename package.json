@@ -2,7 +2,7 @@
   "name": "vim-syntax-parser",
   "version": "0.0.1",
   "description": "js syntax parser for vim",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha tests/.setup.js tests/__tests__/**.js"
   },
