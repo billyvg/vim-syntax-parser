@@ -23,11 +23,11 @@ const _test = (testFileName, options, fakeOptions) => {
   const source = read(testFileName + '.js');
   let path = testFileName + '.js';
 
-  const Parser = require('../src/index');
+  const parse = require('../src/index').default;
 
   const results = [];
 
-  Parser.parse(source, options, function(err, result) {
+  parse(source, options, function(err, result) {
     results.push(result);
   });
 
