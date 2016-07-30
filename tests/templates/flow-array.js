@@ -1,0 +1,1 @@
+type People = Array<string>;

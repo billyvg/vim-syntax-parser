@@ -18,4 +18,14 @@ describe('Variable Declarations', function() {
       columnEnd: 5,
     });
   });
+
+  it('identifies `let` declarations', function() {
+    test('let-declaration', {
+      type: 'VariableDeclaration',
+      lineStart: 1,
+      lineEnd: 1,
+      columnStart: 0,
+      columnEnd: 3,
+    });
+  });
 });
