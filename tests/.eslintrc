@@ -1,0 +1,15 @@
+{
+  "env": {
+    "mocha": true,
+    "es6": true,
+  },
+  "globals": {
+    "test": false,
+    "testEqual": false
+  },
+  "rules": {
+    "prefer-arrow-callback": 0,
+    "space-before-function-paren": [1, "never"],
+    "func-names": 0,
+  }
+}
