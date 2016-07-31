@@ -31,6 +31,13 @@ describe('Functions', function() {
           [1, 31, 32],
       ]);
     });
+
+    it('default arguments value', function() {
+      testTypes(results, 'DefaultArgument', [
+          [1, 19, 25],
+          [1, 32, 46],
+      ]);
+    });
   });
 
   describe('multi-line', function() {
