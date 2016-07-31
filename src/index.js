@@ -141,6 +141,27 @@ const BabylonVisitor = (callback) => {
       });
     },
 
+    ExportNamedDeclaration(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      if (node.declaration) {
+        expandMultiLines({
+          ...obj,
+          ...{
+            columnEnd: getColumnStart(node.declaration),
+          },
+        }, callback);
+      } else if (node.specifiers && node.specifiers.length) {
+        expandMultiLines({
+          ...obj,
+          ...{
+            columnEnd: -1,
+          },
+        }, callback);
+      }
+    },
+
     ClassMethod(path) {
       const node = path.node;
       const obj = parseNode(path.node);
