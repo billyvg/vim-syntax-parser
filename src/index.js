@@ -350,6 +350,8 @@ const BabylonVisitor = (callback) => {
           columnStart: left.columnEnd,
           columnEnd: right.columnStart,
         }, callback);
+
+        callback(null, parseNode(node.right, 'DefaultArgument'));
       }
     },
 
