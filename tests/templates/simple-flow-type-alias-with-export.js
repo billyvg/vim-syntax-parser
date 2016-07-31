@@ -1,0 +1,3 @@
+type FooT = {
+  bar: string;
+}

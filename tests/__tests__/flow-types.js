@@ -29,6 +29,16 @@ describe('Flow Types', function() {
     });
   });
 
+  it('type alias with export', function() {
+    test('simple-flow-type-alias', {
+      type: 'TypeAliasIdentifier',
+      lineStart: 1,
+      lineEnd: 1,
+      columnStart: 5,
+      columnEnd: 9,
+    });
+  });
+
   describe('built in types', function() {
     let results;
     before(function() {
