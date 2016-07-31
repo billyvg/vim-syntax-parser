@@ -5,6 +5,9 @@
   },
   "globals": {
     "test": false,
+    "testTypes": false,
+    "testType": false,
+    "parseFile": false,
     "testEqual": false
   },
   "rules": {
