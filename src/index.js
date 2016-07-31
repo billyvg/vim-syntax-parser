@@ -20,39 +20,77 @@ function parseNode(node, overrideType) {
   };
 }
 
-function expandMultiLines(path, callback) {
-  const obj = parseNode(path.node);
+function expandMultiLines(nodeObj, callback) {
   const {
     lineStart,
     lineEnd,
     columnStart,
     columnEnd,
-  } = obj;
+  } = nodeObj;
 
-  return _.range(lineEnd - lineStart + 1).map((i) => {
-    const startCol = i === 0 ? columnStart : 0;
-    const endCol = i === lineEnd - lineStart ? columnEnd : -1;
-    const line = lineStart + i;
-
-    const newObj = {
-      ...obj,
-      ...{
-        lineStart: line,
-        lineEnd: line,
-        columnStart: startCol,
-        columnEnd: endCol,
-      },
-    };
-
+  if (lineEnd === lineStart) {
     if (callback) {
-      callback(null, newObj);
+      callback(null, nodeObj);
+      return nodeObj;
     }
+  } else {
+    return _.range(lineEnd - lineStart + 1).map((i) => {
+      const startCol = i === 0 ? columnStart : 0;
+      const endCol = i === lineEnd - lineStart ? columnEnd : -1;
+      const line = lineStart + i;
 
-    return newObj;
-  });
+      // Eliminate unnecessary hightlight groups
+      // 1) if start === end === 0, nothing to hightlight
+      // TODO: 2) if start === end === end, nothing to highlight
+      if (startCol === endCol && startCol === 0) {
+      } else {
+        const newObj = {
+          ...nodeObj,
+          ...{
+            lineStart: line,
+            lineEnd: line,
+            columnStart: startCol,
+            columnEnd: endCol,
+          },
+        };
+
+        if (callback) {
+          callback(null, newObj);
+        }
+
+        return newObj;
+      }
+    });
+  }
 }
 
 const BabylonVisitor = (callback) => {
+  const parseOperator = (node, name = 'Operator', callback) => {
+    let left;
+    let right;
+
+    if (node.left && node.right) {
+      left = node.left;
+      right = node.right;
+    } else if (node.id && node.init) {
+      left = node.id;
+      right = node.init;
+    }
+
+    if (left && right) {
+      const leftNode = parseNode(left);
+      const rightNode = parseNode(right);
+
+      expandMultiLines({
+        type: name,
+        lineStart: leftNode.lineEnd,
+        lineEnd: rightNode.lineStart,
+        columnStart: leftNode.columnEnd,
+        columnEnd: rightNode.columnStart,
+      }, callback);
+    }
+  };
+
   const visitor = {
     enter(path) {
       // If we have a visitor defined, then don't do anything
@@ -67,7 +105,7 @@ const BabylonVisitor = (callback) => {
 
     TemplateLiteral(path) {
       const node = path.node;
-      expandMultiLines(path, callback);
+      expandMultiLines(parseNode(node), callback);
 
       // Expressions inside of template literal
       if (node.expressions) {
@@ -77,8 +115,30 @@ const BabylonVisitor = (callback) => {
       }
     },
 
+    AssignmentExpression(path) {
+      parseOperator(path.node, 'AssignmentOperator', callback);
+    },
+
+    LogicalExpression(path) {
+      parseOperator(path.node, 'LogicalOperator', callback);
+    },
+
+    BinaryExpression(path) {
+      parseOperator(path.node, 'BinaryOperator', callback);
+    },
+
     ImportDeclaration(path) {
-      expandMultiLines(path, callback);
+      expandMultiLines(parseNode(path.node), callback);
+    },
+
+    ExportDefaultDeclaration(path) {
+      const obj = parseNode(path.node);
+      callback(null, {
+        ...obj,
+        ...{
+          columnEnd: getColumnStart(path.node.declaration),
+        },
+      });
     },
 
     ClassMethod(path) {
@@ -95,6 +155,7 @@ const BabylonVisitor = (callback) => {
           ...obj,
           ...{
             type: 'ClassMethodKeyword',
+            lineEnd: obj.lineStart,
             columnEnd: getColumnStart(node.key),
           },
         });
@@ -105,6 +166,50 @@ const BabylonVisitor = (callback) => {
       if (node.params) {
         node.params.forEach((param) => {
           callback(null, parseNode(param, 'ClassMethodParameter'));
+        });
+      }
+    },
+
+    ArrowFunctionExpression(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      // Arrow function expression `() =>`
+      callback(null, {
+        ...obj,
+        ...{
+          columnEnd: getColumnStart(node.body),
+        },
+      })
+
+      // parameters
+      if (node.params) {
+        node.params.forEach((param) => {
+          callback(null, parseNode(param, 'ArrowFunctionParameter'));
+        });
+      }
+
+      if (node.body && t.isBlockStatement(node.body)) {
+        const body = parseNode(node.body);
+
+        // If arrow function expression has a block statement then add type for
+        // beginning and ending curly brackets
+        callback(null, {
+          ...body,
+          ...{
+            type:  'ArrowFunctionBlock',
+            lineEnd: body.lineStart,
+            columnEnd: body.columnStart + 1,
+          }
+        });
+
+        callback(null, {
+          ...body,
+          ...{
+            type:  'ArrowFunctionBlock',
+            lineStart: body.lineEnd,
+            columnStart: body.columnEnd - 1,
+          }
         });
       }
     },
@@ -183,6 +288,50 @@ const BabylonVisitor = (callback) => {
       });
     },
 
+    FunctionDeclaration(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      if (t.isIdentifier(node.id)) {
+        const id = parseNode(node.id);
+        console.log(id, obj.lineStart);
+        callback(null, {
+          ...obj,
+          ...{
+            type: 'FunctionDeclarationKeyword',
+            lineEnd: obj.lineStart,
+            columnEnd: obj.lineStart === id.lineStart ? getColumnStart(node.id) : -1,
+          },
+        });
+
+        callback(null, parseNode(node.id, 'FunctionDeclarationIdentifier'));
+      }
+
+      if (node.params) {
+        node.params.forEach((param) => {
+          expandMultiLines(parseNode(param, 'FunctionArgument'), callback);
+        });
+      }
+    },
+
+    AssignmentPattern(path) {
+      const node = path.node;
+      const obj = parseNode(path.node);
+
+      if (node.left && node.right) {
+        const left = parseNode(node.left);
+        const right = parseNode(node.right);
+
+        expandMultiLines({
+          type: 'DefaultArgumentAssignmentOperator',
+          lineStart: left.lineEnd,
+          lineEnd: right.lineStart,
+          columnStart: left.columnEnd,
+          columnEnd: right.columnStart,
+        }, callback);
+      }
+    },
+
     VariableDeclaration(path) {
       const obj = parseNode(path.node);
       const node = path.node;
@@ -201,6 +350,11 @@ const BabylonVisitor = (callback) => {
           columnEnd,
         },
       });
+
+    },
+
+    VariableDeclarator(path) {
+      parseOperator(path.node || path, 'AssignmentOperator', callback);
     },
 
     Identifier: {
@@ -209,7 +363,9 @@ const BabylonVisitor = (callback) => {
       },
       exit(path) {
         // Class methods are treated differently
-        if (path.parent && path.parent.type !== 'ClassMethod') {
+        if (path.parent &&
+            path.parent.type !== 'ClassMethod' &&
+            path.parent.type !== 'FunctionDeclaration') {
           const type = `${path.parent.type}Identifier`;
           callback(null, parseNode(path.node, type));
         }
