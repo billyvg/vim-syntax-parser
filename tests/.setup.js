@@ -108,6 +108,10 @@ global.testType = (results, type, expectedResult, options) => {
 };
 
 global.testTypes = (results, type, expectedResults, options) => {
+  if (typeof results === 'string') {
+    results = parseFile(results);
+  }
+
   const expected = expectedResults.map((result) => {
     let [
       lineStart,
