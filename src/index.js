@@ -426,6 +426,38 @@ const BabylonVisitor = (callback) => {
 
     },
 
+    JSXOpeningElement(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      expandMultiLines(obj, callback);
+
+      if (node.name) {
+        callback(null, parseNode(node.name, 'JSXElementName'));
+      }
+    },
+
+    JSXClosingElement(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      expandMultiLines(obj, callback);
+
+      if (node.name) {
+        callback(null, parseNode(node.name, 'JSXElementName'));
+      }
+    },
+
+    JSXAttribute(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      callback(null, obj);
+
+      if (node.value) {
+        callback(null, parseNode(node.value, 'JSXAttributeValue'));
+      }
+    },
   };
 
 
