@@ -483,5 +483,10 @@ export default function parse(source, options = {}, callback) {
   const visitor = BabylonVisitor(callback);
 
   traverse(ast, visitor);
+
+  // Only parse `=>` for now
+  ast.tokens
+    .filter((token) => token.type.label === '=>')
+    .forEach((token) => callback(null, parseNode(token, 'ArrowFunctionExpressionToken')));
 };
 
