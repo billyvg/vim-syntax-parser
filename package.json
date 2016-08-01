@@ -4,6 +4,8 @@
   "description": "js syntax parser for vim",
   "main": "lib/index.js",
   "scripts": {
+    "build": "babel src --out-dir lib",
+    "dev": "babel src --out-dir lib --watch",
     "test-watch": "mocha tests/.setup.js tests/__tests__/**.js --compilers js:babel-core/register --watch",
     "test": "mocha tests/.setup.js tests/__tests__/**.js --compilers js:babel-core/register"
   },
