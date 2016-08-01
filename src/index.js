@@ -469,24 +469,28 @@ export default function parse(source, options = {}, callback) {
     throw new Error('Callback required');
   }
 
-  const ast = babylonParse(source, {
-    sourceType: 'module',
-    plugins: options.plugins || [
-      'jsx',
-      'flow',
-      'decorators',
-      'objectRestSpread',
-      'classProperties',
-    ],
-  });
+  try {
+    const ast = babylonParse(source, {
+      sourceType: 'module',
+      plugins: options.plugins || [
+        'jsx',
+        'flow',
+        'decorators',
+        'objectRestSpread',
+        'classProperties',
+      ],
+    });
 
-  const visitor = BabylonVisitor(callback);
+    const visitor = BabylonVisitor(callback);
 
-  traverse(ast, visitor);
+    traverse(ast, visitor);
 
-  // Only parse `=>` for now
-  ast.tokens
-    .filter((token) => token.type.label === '=>')
-    .forEach((token) => callback(null, parseNode(token, 'ArrowFunctionExpressionToken')));
+    // Only parse `=>` from tokens for now
+    ast.tokens
+      .filter((token) => token.type.label === '=>')
+      .forEach((token) => callback(null, parseNode(token, 'ArrowFunctionExpressionToken')));
+  } catch(err) {
+    callback(err);
+  }
 };
 
