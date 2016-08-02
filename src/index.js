@@ -317,7 +317,6 @@ const BabylonVisitor = (callback) => {
 
       if (t.isIdentifier(node.id)) {
         const id = parseNode(node.id);
-        console.log(id, obj.lineStart);
         callback(null, {
           ...obj,
           ...{
@@ -447,6 +446,20 @@ const BabylonVisitor = (callback) => {
 
       if (node.name) {
         callback(null, parseNode(node.name, 'JSXElementName'));
+      }
+    },
+
+    JSXSpreadAttribute(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      callback(null, obj);
+
+      if (node.argument && t.isObjectExpression(node.argument)) {
+        node.argument.properties.forEach((property) => {
+          const propObj = parseNode(property, `${node.type}${property.type}`);
+          callback(null, propObj);
+        });
       }
     },
 
