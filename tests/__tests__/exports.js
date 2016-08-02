@@ -7,7 +7,7 @@ describe('Exports', function() {
 
   it('named export', function() {
     testTypes('export-named', 'ExportNamedDeclaration', [
-        [1, 0, 6],
+        [1, 0, 7],
     ]);
   });
 
@@ -19,6 +19,13 @@ describe('Exports', function() {
         [3, 0, -1],
         [4, 0, -1],
         [6, 0, -1],
+    ]);
+  });
+
+  it('export function inline', function() {
+    // entire export block
+    testTypes('export-function-inline', 'ExportNamedDeclaration', [
+        [1, 0, 7],
     ]);
   });
 });

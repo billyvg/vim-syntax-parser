@@ -146,10 +146,12 @@ const BabylonVisitor = (callback) => {
       const obj = parseNode(node);
 
       if (node.declaration) {
+        const decl = parseNode(node.declaration);
         expandMultiLines({
           ...obj,
           ...{
-            columnEnd: getColumnStart(node.declaration),
+            lineEnd: decl.lineStart,
+            columnEnd: decl.columnStart,
           },
         }, callback);
       } else if (node.specifiers && node.specifiers.length) {
