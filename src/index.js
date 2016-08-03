@@ -64,6 +64,25 @@ function expandMultiLines(nodeObj, callback) {
   }
 }
 
+// Given a list of nodes, takes start of first node -> end of last node
+function parseRange(type, nodes, callback) {
+  if (nodes.length) {
+    const firstObj = parseNode(nodes[0]);
+    const lastObj = parseNode(nodes[nodes.length - 1]);
+
+    return expandMultiLines({
+      type,
+      lineStart: firstObj.lineStart,
+      lineEnd: lastObj.lineEnd,
+      columnStart: firstObj.columnStart,
+      columnEnd: lastObj.columnEnd,
+    }, callback);
+  } else {
+    throw new Error('`nodes` is an invalid or empty array');
+  }
+}
+
+
 const BabylonVisitor = (callback) => {
   const parseOperator = (node, name = 'Operator', callback) => {
     let left;
@@ -164,9 +183,21 @@ const BabylonVisitor = (callback) => {
       }
     },
 
+    Decorator(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      callback(null, obj);
+
+      // If `expression` is a `CallExpression`, then group all args as a type
+      if (t.isCallExpression(node.expression)) {
+        parseRange('DecoratorArguments', node.expression.arguments, callback);
+      }
+    },
+
     ClassMethod(path) {
       const node = path.node;
-      const obj = parseNode(path.node);
+      const obj = parseNode(node);
 
       // Entire Class Method block
       callback(null, obj);
@@ -456,6 +487,8 @@ const BabylonVisitor = (callback) => {
       callback(null, obj);
 
       if (node.argument && t.isObjectExpression(node.argument)) {
+        expandMultiLines(parseNode(node.argument, 'JSXSpreadAttributeObjectExpression'), callback);
+
         node.argument.properties.forEach((property) => {
           const propObj = parseNode(property, `${node.type}${property.type}`);
           callback(null, propObj);

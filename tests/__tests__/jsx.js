@@ -34,6 +34,16 @@ describe('JSX', function() {
     ]);
   });
 
+  it('spread attributes, entire object expression', function() {
+    testTypes('jsx-spread-props', 'JSXSpreadAttributeObjectExpression', [
+        [4, 10, -1],
+        [5, 0, -1],
+        [6, 0, -1],
+        [7, 0, -1],
+        [8, 0, 7],
+    ]);
+  });
+
   it('spread attributes with spread object property', function() {
     testTypes('jsx-spread-props', 'JSXSpreadAttributeSpreadProperty', [
         [5, 9, 22],

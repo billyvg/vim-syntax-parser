@@ -21,4 +21,10 @@ describe('Class', function() {
       ]);
     });
   });
+
+  it('class method decorator with argument', function() {
+    testTypes('class-method-decorator-with-argument', 'DecoratorArguments', [
+        [2, 13, 21],
+    ]);
+  });
 });
