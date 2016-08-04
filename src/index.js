@@ -439,22 +439,22 @@ const BabylonVisitor = (callback) => {
       const alternate = parseNode(node.alternate);
 
       // ?
-      callback(null, {
+      expandMultiLines({
         type: 'TernaryOperator',
-        lineStart: obj.lineStart,
-        lineEnd: obj.lineStart,
+        lineStart: test.lineEnd,
+        lineEnd: consequent.lineStart,
         columnStart: test.columnEnd,
         columnEnd: consequent.columnStart,
-      });
+      }, callback);
 
       // :
-      callback(null, {
+      expandMultiLines({
         type: 'TernaryOperator',
-        lineStart: obj.lineStart,
-        lineEnd: obj.lineStart,
+        lineStart: consequent.lineEnd,
+        lineEnd: alternate.lineStart,
         columnStart: consequent.columnEnd,
         columnEnd: alternate.columnStart,
-      });
+      }, callback);
 
     },
 

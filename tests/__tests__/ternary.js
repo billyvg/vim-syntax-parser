@@ -1,13 +1,18 @@
 describe('Ternary', function() {
-  let results;
-  before(function() {
-    results = global.parseFile('ternary');
-  });
-
   it('special chars (? and :)', function() {
-    testTypes(results, 'TernaryOperator', [
+    testTypes('ternary', 'TernaryOperator', [
         [1, 21, 24],
         [1, 29, 32],
+    ]);
+  });
+
+  it('multiline - special chars (? and :)', function() {
+    testTypes('ternary-multiline', 'TernaryOperator', [
+        [1, 21, -1],
+        [2, 0, 2],
+        [2, 7, -1],
+        [3, 0, -1],
+        [4, 0, 2],
     ]);
   });
 });
