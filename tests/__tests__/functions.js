@@ -38,6 +38,12 @@ describe('Functions', function() {
           [1, 32, 46],
       ]);
     });
+
+    it('return statement', function() {
+      testTypes(results, 'ReturnKeyword', [
+        [2, 2, 9],
+      ]);
+    });
   });
 
   describe('multi-line', function() {

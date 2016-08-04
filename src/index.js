@@ -412,6 +412,15 @@ const BabylonVisitor = (callback) => {
       parseOperator(path.node || path, 'AssignmentOperator', callback);
     },
 
+    ReturnStatement(path) {
+      const node = path.node;
+      const obj = parseNode(node, 'ReturnKeyword');
+      callback(null, {
+        ...obj,
+        columnEnd: obj.columnStart + 7,
+      });
+    },
+
     Identifier: {
       enter(path) {
         callback(null, parseNode(path.node));
