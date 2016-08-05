@@ -61,6 +61,10 @@ describe('Imports', function() {
       testTypes(results, 'ImportDeclaration', [
         [1, 0, -1],
         [2, 0, 2],
+        [2, 5, -1],
+        [3, 0, 2],
+        [3, 13, -1],
+        [4, 0, 2],
         [4, 5, -1],
         [5, 0, 7],
         [3, 5, 9],
@@ -85,5 +89,14 @@ describe('Imports', function() {
           [4, 2, 5],
       ]);
     });
+  });
+
+  it('default and non-default mixed', function() {
+    testTypes('import-default-and-non-mixed', 'ImportDeclaration', [
+      [1, 0, 7],
+      [1, 10, 14],
+      [1, 24, 32],
+      [1, 17, 21],
+    ]);
   });
 });

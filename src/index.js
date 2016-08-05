@@ -178,9 +178,19 @@ const BabylonVisitor = (callback) => {
         node, firstSpecifier,
       ], 'left');
 
+      // In between specifiers
+      node.specifiers.forEach((specifier, i) => {
+        if (node.specifiers[i + 1]) {
+          parseRange('ImportDeclaration', [
+            specifier, node.specifiers[i + 1]
+          ], 'middle');
+        }
+      });
+
       parseRange('ImportDeclaration', [
         lastSpecifier, node.source,
       ], 'middle');
+
     },
 
     ImportSpecifier(path) {
