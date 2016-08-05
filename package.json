@@ -1,6 +1,6 @@
 {
   "name": "vim-syntax-parser",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "js syntax parser for vim",
   "main": "lib/index.js",
   "scripts": {
