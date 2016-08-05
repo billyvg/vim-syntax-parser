@@ -20,71 +20,94 @@ function parseNode(node, overrideType) {
   };
 }
 
-function expandMultiLines(nodeObj, callback) {
-  const {
-    lineStart,
-    lineEnd,
-    columnStart,
-    columnEnd,
-  } = nodeObj;
-
-  if (lineEnd === lineStart) {
-    if (callback) {
-      callback(null, nodeObj);
-      return nodeObj;
-    }
-  } else {
-    return _.range(lineEnd - lineStart + 1).map((i) => {
-      const startCol = i === 0 ? columnStart : 0;
-      const endCol = i === lineEnd - lineStart ? columnEnd : -1;
-      const line = lineStart + i;
-
-      // Eliminate unnecessary hightlight groups
-      // 1) if start === end === 0, nothing to hightlight
-      // TODO: 2) if start === end === end, nothing to highlight
-      if (startCol === endCol && startCol === 0) {
-      } else {
-        const newObj = {
-          ...nodeObj,
-          ...{
-            lineStart: line,
-            lineEnd: line,
-            columnStart: startCol,
-            columnEnd: endCol,
-          },
-        };
-
-        if (callback) {
-          callback(null, newObj);
-        }
-
-        return newObj;
-      }
-    });
-  }
-}
-
-// Given a list of nodes, takes start of first node -> end of last node
-function parseRange(type, nodes, callback) {
-  if (nodes.length) {
-    const firstObj = parseNode(nodes[0]);
-    const lastObj = parseNode(nodes[nodes.length - 1]);
-
-    return expandMultiLines({
-      type,
-      lineStart: firstObj.lineStart,
-      lineEnd: lastObj.lineEnd,
-      columnStart: firstObj.columnStart,
-      columnEnd: lastObj.columnEnd,
-    }, callback);
-  } else {
-    throw new Error('`nodes` is an invalid or empty array');
-  }
-}
-
-
 const BabylonVisitor = (callback) => {
-  const parseOperator = (node, name = 'Operator', callback) => {
+  const expandMultiLines = (nodeObj) => {
+    const {
+      lineStart,
+      lineEnd,
+      columnStart,
+      columnEnd,
+    } = nodeObj;
+
+    if (lineEnd === lineStart) {
+      if (callback) {
+        callback(null, nodeObj);
+        return nodeObj;
+      }
+    } else {
+      return _.range(lineEnd - lineStart + 1).map((i) => {
+        const startCol = i === 0 ? columnStart : 0;
+        const endCol = i === lineEnd - lineStart ? columnEnd : -1;
+        const line = lineStart + i;
+
+        // Eliminate unnecessary hightlight groups
+        // 1) if start === end === 0, nothing to hightlight
+        // TODO: 2) if start === end === end, nothing to highlight
+        if (startCol === endCol && startCol === 0) {
+        } else {
+          const newObj = {
+            ...nodeObj,
+            ...{
+              lineStart: line,
+              lineEnd: line,
+              columnStart: startCol,
+              columnEnd: endCol,
+            },
+          };
+
+          if (callback) {
+            callback(null, newObj);
+          }
+
+          return newObj;
+        }
+      });
+    }
+  };
+
+  // Given a list of nodes, takes start of first node -> end of last node
+  const parseRange = (type, nodes, rangeType = 'inside') => {
+    if (nodes.length) {
+      const firstObj = parseNode(_.first(nodes));
+      const lastObj = parseNode(_.last(nodes));
+      let lineStart;
+      let lineEnd;
+      let columnStart;
+      let columnEnd;
+
+      if (rangeType === 'left') {
+        // start of first node until start of last node
+        lineStart = firstObj.lineStart;
+        lineEnd = lastObj.lineStart;
+        columnStart = firstObj.columnStart;
+        columnEnd = lastObj.columnStart;
+      } else if (rangeType === 'middle') {
+        // end of first node until start of last node
+        lineStart = firstObj.lineEnd;
+        lineEnd = lastObj.lineStart;
+        columnStart = firstObj.columnEnd;
+        columnEnd = lastObj.columnStart;
+      } else {
+        // default is start of first node until end of last node
+        lineStart = firstObj.lineStart;
+        lineEnd = lastObj.lineEnd;
+        columnStart = firstObj.columnStart;
+        columnEnd = lastObj.columnEnd;
+      }
+
+      return expandMultiLines({
+        type,
+        lineStart,
+        lineEnd,
+        columnStart,
+        columnEnd,
+      });
+    } else {
+      throw new Error('`nodes` is an invalid or empty array');
+    }
+  };
+
+  const parseOperator = (node, name = 'Operator') => {
     let left;
     let right;
 
@@ -135,19 +158,41 @@ const BabylonVisitor = (callback) => {
     },
 
     AssignmentExpression(path) {
-      parseOperator(path.node, 'AssignmentOperator', callback);
+      parseOperator(path.node, 'AssignmentOperator');
     },
 
     LogicalExpression(path) {
-      parseOperator(path.node, 'LogicalOperator', callback);
+      parseOperator(path.node, 'LogicalOperator');
     },
 
     BinaryExpression(path) {
-      parseOperator(path.node, 'BinaryOperator', callback);
+      parseOperator(path.node, 'BinaryOperator');
     },
 
     ImportDeclaration(path) {
-      expandMultiLines(parseNode(path.node), callback);
+      const node = path.node;
+      const firstSpecifier = _.first(node.specifiers);
+      const lastSpecifier = _.last(node.specifiers);
+
+      parseRange('ImportDeclaration', [
+        node, firstSpecifier,
+      ], 'left');
+
+      parseRange('ImportDeclaration', [
+        lastSpecifier, node.source,
+      ], 'middle');
+    },
+
+    ImportSpecifier(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+      callback(null, obj);
+
+      if (node.local && node.imported && node.local.start !== node.imported.start) {
+        parseRange('ImportDeclaration', [
+            node.imported, node.local
+        ], 'middle');
+      }
     },
 
     ExportDefaultDeclaration(path) {
@@ -191,7 +236,7 @@ const BabylonVisitor = (callback) => {
 
       // If `expression` is a `CallExpression`, then group all args as a type
       if (t.isCallExpression(node.expression)) {
-        parseRange('DecoratorArguments', node.expression.arguments, callback);
+        parseRange('DecoratorArguments', node.expression.arguments, 'inside');
       }
     },
 
@@ -470,22 +515,55 @@ const BabylonVisitor = (callback) => {
     JSXOpeningElement(path) {
       const node = path.node;
       const obj = parseNode(node);
+      let nameObj;
+      let lastArg;
 
-      expandMultiLines(obj, callback);
+      // Opening element start is always 1 char
+      callback(null, {
+        ...obj,
+        columnEnd: obj.columnStart + 1,
+        lineEnd: obj.lineStart,
+      });
 
       if (node.name) {
-        callback(null, parseNode(node.name, 'JSXElementName'));
+        nameObj = parseNode(node.name, 'JSXElementName')
+        callback(null, nameObj);
       }
+
+      if (node.attributes && node.attributes.length) {
+        lastArg = parseNode(node.attributes[node.attributes.length - 1]);
+      } else {
+        lastArg = nameObj;
+      }
+
+      expandMultiLines({
+        ...obj,
+        columnStart: lastArg.columnEnd,
+        lineStart: lastArg.lineEnd,
+      }, callback);
     },
 
     JSXClosingElement(path) {
       const node = path.node;
       const obj = parseNode(node);
 
-      expandMultiLines(obj, callback);
-
       if (node.name) {
-        callback(null, parseNode(node.name, 'JSXElementName'));
+        const nameObj = parseNode(node.name, 'JSXElementName');
+        callback(null, nameObj);
+
+        // First char of closing element
+        expandMultiLines({
+          ...obj,
+          columnEnd: nameObj.columnStart,
+          lineEnd: nameObj.lineStart,
+        }, callback);
+
+        // Last char of closing element
+        callback(null, {
+          ...obj,
+          columnStart: obj.columnEnd - 1,
+          lineStart: obj.lineEnd,
+        });
       }
     },
 
@@ -509,12 +587,48 @@ const BabylonVisitor = (callback) => {
       const node = path.node;
       const obj = parseNode(node);
 
-      callback(null, obj);
-
       if (node.value) {
-        callback(null, parseNode(node.value, 'JSXAttributeValue'));
+        const valueObj = parseNode(node.value, 'JSXAttributeValue');
+        // Everything up to attribute value
+        expandMultiLines({
+          ...obj,
+          columnEnd: valueObj.columnStart,
+          lineEnd: valueObj.lineStart,
+        }, callback)
+
+        // Attribute value
+        callback(null, valueObj);
+      } else {
+        // attribute without a value
+        callback(null, obj);
       }
     },
+
+    JSXExpressionContainer(path) {
+      const node = path.node;
+      const obj = parseNode(node);
+
+      callback(null, obj);
+
+      // Container start
+      callback(null, {
+        ...obj,
+        type: 'JSXExpressionContainerStart',
+        lineEnd: obj.lineStart,
+        columnEnd: obj.columnStart + 1,
+      });
+
+      // Container end
+      callback(null, {
+        ...obj,
+        type: 'JSXExpressionContainerEnd',
+        lineStart: obj.lineEnd,
+        columnStart: obj.columnEnd - 1,
+      });
+
+      // Expression
+      callback(null, parseNode(node.expression, 'JSXExpression'));
+    }
   };
 
 

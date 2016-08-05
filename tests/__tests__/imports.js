@@ -6,11 +6,15 @@ describe('Imports', function() {
     });
 
     it('import declaration (entire import block)', function() {
-      testType(results, 'ImportDeclaration', [ 1, 0, 33 ]);
+      testTypes(results, 'ImportDeclaration', [
+          [1, 0, 9],
+          [1, 19, 27],
+          [1, 12, 16],
+      ]);
     });
 
     it('import specifier (what you are importing)', function() {
-      testType(results, 'ImportSpecifier', [ 1, 9, 19 ]);
+      testType(results, 'ImportSpecifier', [1, 9, 19]);
     });
 
     it('identifiers within import specifier', function() {
@@ -28,15 +32,22 @@ describe('Imports', function() {
     });
 
     it('import declaration (entire import block)', function() {
-      testType(results, 'ImportDeclaration', [ 1, 0, 22 ]);
+      testTypes(results, 'ImportDeclaration', [
+        [1, 0, 7],
+        [1, 10, 16],
+      ]);
     });
 
     it('import specifier (what you are importing)', function() {
-      testType(results, 'ImportDefaultSpecifier', [ 1, 7, 10 ]);
+      testTypes(results, 'ImportDefaultSpecifier', [
+        [1, 7, 10],
+      ]);
     });
 
     it('identifiers within import specifier', function() {
-      testType(results, 'ImportDefaultSpecifierIdentifier', [1, 7, 10]);
+      testTypes(results, 'ImportDefaultSpecifierIdentifier', [
+        [1, 7, 10],
+      ]);
     });
   });
 
@@ -49,10 +60,10 @@ describe('Imports', function() {
     it('import declaration (entire import block)', function() {
       testTypes(results, 'ImportDeclaration', [
         [1, 0, -1],
-        [2, 0, -1],
-        [3, 0, -1],
-        [4, 0, -1],
-        [5, 0, 13],
+        [2, 0, 2],
+        [4, 5, -1],
+        [5, 0, 7],
+        [3, 5, 9],
       ]);
     });
 

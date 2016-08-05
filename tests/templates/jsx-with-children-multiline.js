@@ -1,6 +1,7 @@
 const Component = () => {
   return (
-    <div
+    <
+    div
       className="centered"
     >
       {foo}
