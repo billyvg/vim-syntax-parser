@@ -645,7 +645,7 @@ const BabylonVisitor = (callback) => {
   return visitor;
 };
 
-export default function parse(source, options = {}, callback) {
+export default function parse(source, options = {}, callback, done) {
   if (typeof callback !== 'function') {
     throw new Error('Callback required');
   }
@@ -670,6 +670,10 @@ export default function parse(source, options = {}, callback) {
     ast.tokens
       .filter((token) => token.type.label === '=>')
       .forEach((token) => callback(null, parseNode(token, 'ArrowFunctionExpressionToken')));
+
+    if (typeof done === 'function') {
+      done();
+    }
   } catch(err) {
     callback(err);
   }
