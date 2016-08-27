@@ -1,8 +1,8 @@
 describe('Imports', function() {
   describe('Non-default and inline', function() {
     let results;
-    before(function() {
-      results = global.parseFile('import-non-default-inline');
+    before(async function() {
+      results = await global.parseFile('import-non-default-inline');
     });
 
     it('import declaration (entire import block)', function() {
@@ -27,8 +27,8 @@ describe('Imports', function() {
 
   describe('Default and inline', function() {
     let results;
-    before(function() {
-      results = global.parseFile('import-default-inline');
+    before(async function() {
+      results = await global.parseFile('import-default-inline');
     });
 
     it('import declaration (entire import block)', function() {
@@ -53,8 +53,8 @@ describe('Imports', function() {
 
   describe('Multiple', function() {
     let results;
-    before(function() {
-      results = global.parseFile('import-multiple');
+    before(async function() {
+      results = await global.parseFile('import-multiple');
     });
 
     it('import declaration (entire import block)', function() {

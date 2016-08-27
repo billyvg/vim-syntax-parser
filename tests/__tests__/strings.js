@@ -3,11 +3,9 @@ import _ from 'lodash';
 describe('Strings', function() {
   describe('Regular strings', function() {
     let results;
-    before(function() {
-      results = _.filter(
-        global.parseFile('single-line-string'),
-        (result) => result.type === 'StringLiteral'
-      );
+    before(async function() {
+      results = await global.parseFile('single-line-string');
+      results = _.filter(results, (result) => result.type === 'StringLiteral');
     });
 
     it('has single line string with double quotes', function() {
@@ -34,17 +32,16 @@ describe('Strings', function() {
   describe('Template strings', function() {
     let results;
     let templateLiterals;
-    let identifiers;
+
     before(function() {
-      results = parseFile('template-strings');
-      templateLiterals = _.filter(
-        results,
-        (result) => result.type === 'TemplateLiteral'
-      );
-      identifiers = _.filter(
-        results,
-        (result) => result.type === 'Identifier'
-      );
+      parseFile('template-strings').then((res) => {
+        templateLiterals = _.filter(
+          res,
+          (result) => result.type === 'TemplateLiteral'
+        );
+
+        results = res;
+      });
     });
 
     it('has single line template string', function() {

@@ -3,6 +3,7 @@ import * as t from 'babel-types';
 import traverse from 'babel-traverse';
 import _ from 'lodash';
 
+
 function getColumnStart(node) {
   const columnStart = node.loc.start.column;
 
@@ -645,37 +646,37 @@ const BabylonVisitor = (callback) => {
   return visitor;
 };
 
-export default function parse(source, options = {}, callback, done) {
-  if (typeof callback !== 'function') {
-    throw new Error('Callback required');
-  }
+export default function parse(source, options = {}) {
+  return new Promise((resolve, reject) => {
+    try {
+      const results = [];
+      const cb = (err, result) => {
+        results.push(result);
+      };
+      const ast = babylonParse(source, {
+        sourceType: 'module',
+        plugins: options.plugins || [
+          'jsx',
+          'flow',
+          'decorators',
+          'objectRestSpread',
+          'classProperties',
+        ],
+      });
 
-  try {
-    const ast = babylonParse(source, {
-      sourceType: 'module',
-      plugins: options.plugins || [
-        'jsx',
-        'flow',
-        'decorators',
-        'objectRestSpread',
-        'classProperties',
-      ],
-    });
+      const visitor = BabylonVisitor(cb);
 
-    const visitor = BabylonVisitor(callback);
+      traverse(ast, visitor);
 
-    traverse(ast, visitor);
+      // Only parse `=>` from tokens for now
+      ast.tokens
+        .filter((token) => token.type.label === '=>')
+        .forEach((token) => cb(null, parseNode(token, 'ArrowFunctionExpressionToken')));
 
-    // Only parse `=>` from tokens for now
-    ast.tokens
-      .filter((token) => token.type.label === '=>')
-      .forEach((token) => callback(null, parseNode(token, 'ArrowFunctionExpressionToken')));
-
-    if (typeof done === 'function') {
-      done();
+      resolve(results);
+    } catch(err) {
+      reject(err);
     }
-  } catch(err) {
-    callback(err);
-  }
+  });
 };
 
