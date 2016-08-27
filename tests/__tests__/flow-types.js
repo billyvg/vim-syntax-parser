@@ -41,8 +41,8 @@ describe('Flow Types', function() {
 
   describe('built in types', function() {
     let results;
-    before(function() {
-      results = global.parseFile('flow-built-in-types');
+    before(async function() {
+      results = await global.parseFile('flow-built-in-types');
     });
 
     it('string', function() {
@@ -104,8 +104,8 @@ describe('Flow Types', function() {
 
   describe('Arrays', function() {
     let results;
-    before(function() {
-      results = global.parseFile('flow-array');
+    before(async function() {
+      results = await global.parseFile('flow-array');
     });
 
     it('generic type annotation', function () {
@@ -135,8 +135,8 @@ describe('Flow Types', function() {
 
   describe('Objects', function() {
     let results;
-    before(function() {
-      results = global.parseFile('flow-object');
+    before(async function() {
+      results = await global.parseFile('flow-object');
     });
 
     it('type keyword', function() {
@@ -178,8 +178,8 @@ describe('Flow Types', function() {
 
   describe('Objects Inline', function() {
     let results;
-    before(function() {
-      results = global.parseFile('flow-object-inline');
+    before(async function() {
+      results = await global.parseFile('flow-object-inline');
     });
 
     it('type keyword', function() {

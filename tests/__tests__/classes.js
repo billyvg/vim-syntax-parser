@@ -1,8 +1,8 @@
 describe('Class', function() {
   describe('Basic class', function() {
     let results;
-    before(function() {
-      results = global.parseFile('class');
+    before(async function() {
+      results = await global.parseFile('class');
     });
 
     it('class methods', function() {

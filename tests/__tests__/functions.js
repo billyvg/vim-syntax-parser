@@ -1,8 +1,8 @@
 describe('Functions', function() {
   describe('single-line', function() {
     let results;
-    before(function() {
-      results = parseFile('function-declaration');
+    before(async function() {
+      results = await parseFile('function-declaration');
     });
 
     it('function declaration keyword', function() {
@@ -48,8 +48,8 @@ describe('Functions', function() {
 
   describe('multi-line', function() {
     let results;
-    before(function() {
-      results = parseFile('function-declaration-multiline');
+    before(async function() {
+      results = await parseFile('function-declaration-multiline');
     });
 
     it('function declaration keyword', function() {

@@ -1,8 +1,14 @@
 'use strict';
 
+const regeneratorRuntime = require('regenerator-runtime/runtime');
+
 require('babel-register')({
   presets: ['es2015', 'stage-1'],
-  plugins: ['transform-decorators-legacy'],
+  plugins: [
+    'transform-decorators-legacy',
+    'syntax-async-functions',
+    'transform-regenerator'
+  ],
 });
 
 const _ = require('lodash');
@@ -27,11 +33,7 @@ const _test = (testFileName, options, fakeOptions) => {
 
   const results = [];
 
-  parse(source, options, function(err, result) {
-    results.push(result);
-  });
-
-  return results;
+  return parse(source, options)
 };
 
 global.parseFile = (testFilename, options) => {
@@ -39,14 +41,15 @@ global.parseFile = (testFilename, options) => {
 };
 
 global.test = (testFileName, expectedResults, options) => {
-  const result = _test(testFileName, options);
-  if (_.isArray(expectedResults)) {
-    expectedResults.forEach((expectedResult) => {
-      expect(result).to.include(expectedResult);
-    });
-  } else {
-    expect(result).to.include(expectedResults);
-  }
+  return _test(testFileName, options).then((results) => {
+    if (_.isArray(expectedResults)) {
+      expectedResults.forEach((expectedResult) => {
+        expect(result).to.include(expectedResult);
+      });
+    } else {
+      expect(result).to.include(expectedResults);
+    }
+  });
 };
 
 global.findType = (results, type) => {
@@ -62,7 +65,11 @@ global.testEqual = (testFileName, type, expectedResult, options) => {
   let _expected = expectedResult;
   if (typeof type !== 'string') {
     _expected = type;
-    _results = _test(testFileName, expectedResult);
+    _results = _test(testFileName, expectedResult).then((results) => {
+      expect(
+        results
+      ).to.deep.equal(_expected);
+    });
   } else {
     _results = findType(
       _test(testFileName, options),
@@ -73,11 +80,12 @@ global.testEqual = (testFileName, type, expectedResult, options) => {
       ...expectedResult,
       ...{ type },
     };
+
+    expect(
+      _results
+    ).to.deep.equal(_expected);
   }
 
-  expect(
-    _results
-  ).to.deep.equal(_expected);
 };
 
 global.testType = (results, type, expectedResult, options) => {
@@ -108,33 +116,40 @@ global.testType = (results, type, expectedResult, options) => {
 };
 
 global.testTypes = (results, type, expectedResults, options) => {
+  const compare = (results) => {
+    const expected = expectedResults.map((result) => {
+      let [
+        lineStart,
+        lineEnd,
+        columnStart,
+        columnEnd,
+      ] = result;
+      if (typeof columnEnd === 'undefined') {
+        columnEnd = columnStart;
+        columnStart = lineEnd;
+        lineEnd = lineStart;
+      }
+
+      return {
+        lineStart,
+        lineEnd,
+        columnStart,
+        columnEnd,
+        type,
+      };
+    });
+
+    expect(
+      findTypes(results, type)
+    ).to.deep.equal(expected);
+  };
+
   if (typeof results === 'string') {
-    results = parseFile(results);
+    parseFile(results).then(compare);
+  } else {
+    compare(results);
   }
 
-  const expected = expectedResults.map((result) => {
-    let [
-      lineStart,
-      lineEnd,
-      columnStart,
-      columnEnd,
-    ] = result;
-    if (typeof columnEnd === 'undefined') {
-      columnEnd = columnStart;
-      columnStart = lineEnd;
-      lineEnd = lineStart;
-    }
 
-    return {
-      lineStart,
-      lineEnd,
-      columnStart,
-      columnEnd,
-      type,
-    };
-  });
 
-  expect(
-    findTypes(results, type)
-  ).to.deep.equal(expected);
 };

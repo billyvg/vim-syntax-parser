@@ -46,8 +46,8 @@ describe('JSX', function() {
 
   describe('spread attributes', function() {
     let results;
-    before(function() {
-      results = parseFile('jsx-spread-props');
+    before(async function() {
+      results = await parseFile('jsx-spread-props');
     });
 
     it('spread attributes, entire object expression', function() {
@@ -76,8 +76,8 @@ describe('JSX', function() {
 
   describe('attributes', function() {
     let results;
-    before(function() {
-      results = parseFile('jsx-with-props');
+    before(async function() {
+      results = await parseFile('jsx-with-props');
     });
 
     it('attribute with value and no value', function() {
