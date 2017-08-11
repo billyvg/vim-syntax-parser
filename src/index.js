@@ -12,6 +12,9 @@ function getColumnStart(node) {
 
 
 function parseNode(node, overrideType) {
+  console.log('node', node);
+  console.log('node', node);
+  if (!node) return;
   return {
     type: overrideType || node.type,
     lineStart: node.loc.start.line,
@@ -23,6 +26,7 @@ function parseNode(node, overrideType) {
 
 const BabylonVisitor = (callback) => {
   const expandMultiLines = (nodeObj) => {
+    if (!nodeObj) return;
     const {
       lineStart,
       lineEnd,
@@ -75,6 +79,8 @@ const BabylonVisitor = (callback) => {
       let lineEnd;
       let columnStart;
       let columnEnd;
+
+      if (!lastObj || !firstObj) { console.log(nodes); return; }
 
       if (rangeType === 'left') {
         // start of first node until start of last node
@@ -679,4 +685,3 @@ export default function parse(source, options = {}) {
     }
   });
 };
-
