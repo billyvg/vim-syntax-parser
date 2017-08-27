@@ -46,61 +46,33 @@ describe('Flow Types', () => {
     });
 
     test('string', () => {
-      testType(results, 'StringTypeAnnotation', [
-        1,
-        10,
-        16,
-      ]);
+      testType(results, 'StringTypeAnnotation', [1, 10, 16]);
     });
 
     test('number', () => {
-      testType(results, 'NumberTypeAnnotation', [
-        2,
-        9,
-        15,
-      ]);
+      testType(results, 'NumberTypeAnnotation', [2, 9, 15]);
     });
 
     test('boolean', () => {
-      testType(results, 'BooleanTypeAnnotation', [
-        3,
-        12,
-        19,
-      ]);
+      testType(results, 'BooleanTypeAnnotation', [3, 12, 19]);
     });
 
     test('null', () => {
-      testType(results, 'NullLiteralTypeAnnotation', [
-        4,
-        15,
-        19,
-      ]);
+      testType(results, 'NullLiteralTypeAnnotation', [4, 15, 19]);
     });
 
     test('void', () => {
-      testType(results, 'VoidTypeAnnotation', [
-        5,
-        12,
-        16,
-      ]);
+      testType(results, 'VoidTypeAnnotation', [5, 12, 16]);
     });
 
     test('any', () => {
-      testType(results, 'AnyTypeAnnotation', [
-        6,
-        12,
-        15,
-      ]);
+      testType(results, 'AnyTypeAnnotation', [6, 12, 15]);
     });
 
     test('mixed', () => {
-      testType(results, 'MixedTypeAnnotation', [
-        7,
-        10,
-        15,
-      ]);
+      testType(results, 'MixedTypeAnnotation', [7, 10, 15]);
     });
-  })
+  });
 
   describe('Arrays', () => {
     let results;
@@ -109,31 +81,16 @@ describe('Flow Types', () => {
     });
 
     test('generic type annotation', () => {
-      testType(results, 'GenericTypeAnnotation', [
-        1,
-        14,
-        27,
-      ]);
+      testType(results, 'GenericTypeAnnotation', [1, 14, 27]);
     });
 
     test('generic type annotation identifier', () => {
-      testType(results, 'GenericTypeAnnotationIdentifier', [
-        1,
-        14,
-        19,
-      ]);
+      testType(results, 'GenericTypeAnnotationIdentifier', [1, 14, 19]);
     });
 
-    test(
-      'generic type annotation parameters (string in Array<string>)',
-      () => {
-        testType(results, 'GenericTypeAnnotationParameter', [
-          1,
-          20,
-          26,
-        ]);
-      }
-    );
+    test('generic type annotation parameters (string in Array<string>)', () => {
+      testType(results, 'GenericTypeAnnotationParameter', [1, 20, 26]);
+    });
   });
 
   describe('Objects', () => {
@@ -143,35 +100,19 @@ describe('Flow Types', () => {
     });
 
     test('type keyword', () => {
-      testType(results, 'TypeAliasKeyword', [
-        1,
-        0,
-        4,
-      ]);
+      testType(results, 'TypeAliasKeyword', [1, 0, 4]);
     });
 
     test('type identifier', () => {
-      testType(results, 'TypeAliasIdentifier', [
-        1,
-        5,
-        12,
-      ]);
+      testType(results, 'TypeAliasIdentifier', [1, 5, 12]);
     });
 
     test('object type start bracket', () => {
-      testType(results, 'ObjectTypeAnnotationStartBracket', [
-        1,
-        15,
-        16,
-      ]);
+      testType(results, 'ObjectTypeAnnotationStartBracket', [1, 15, 16]);
     });
 
     test('object type end bracket', () => {
-      testType(results, 'ObjectTypeAnnotationEndBracket', [
-        7,
-        0,
-        1,
-      ]);
+      testType(results, 'ObjectTypeAnnotationEndBracket', [7, 0, 1]);
     });
 
     test('first object type property (`name: string;`)', () => {
@@ -186,24 +127,23 @@ describe('Flow Types', () => {
     });
 
     test('type keyword', () => {
-      testType(results, 'TypeAliasKeyword', [ 1, 0, 4, ]);
+      testType(results, 'TypeAliasKeyword', [1, 0, 4]);
     });
 
     test('type identifier', () => {
-      testType(results, 'TypeAliasIdentifier', [ 1, 5, 12, ]);
+      testType(results, 'TypeAliasIdentifier', [1, 5, 12]);
     });
 
     test('object type start bracket', () => {
-      testType(results, 'ObjectTypeAnnotationStartBracket', [ 1, 15, 16, ]);
+      testType(results, 'ObjectTypeAnnotationStartBracket', [1, 15, 16]);
     });
 
     test('object type end bracket', () => {
-      testType(results, 'ObjectTypeAnnotationEndBracket', [ 1, 94, 95, ]);
+      testType(results, 'ObjectTypeAnnotationEndBracket', [1, 94, 95]);
     });
 
     test('first object type property (`name: string;`)', () => {
       testType(results, 'ObjectTypeProperty', [1, 17, 30]);
     });
   });
-
 });

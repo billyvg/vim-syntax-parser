@@ -3,17 +3,13 @@ import * as t from 'babel-types';
 import traverse from 'babel-traverse';
 import _ from 'lodash';
 
-
 function getColumnStart(node) {
   const columnStart = node.loc.start.column;
 
   return columnStart - 1 < 0 ? 0 : columnStart - 1;
 }
 
-
 function parseNode(node, overrideType) {
-  console.log('node', node);
-  console.log('node', node);
   if (!node) return;
   return {
     type: overrideType || node.type,
@@ -24,15 +20,10 @@ function parseNode(node, overrideType) {
   };
 }
 
-const BabylonVisitor = (callback) => {
-  const expandMultiLines = (nodeObj) => {
+const BabylonVisitor = callback => {
+  const expandMultiLines = nodeObj => {
     if (!nodeObj) return;
-    const {
-      lineStart,
-      lineEnd,
-      columnStart,
-      columnEnd,
-    } = nodeObj;
+    const { lineStart, lineEnd, columnStart, columnEnd } = nodeObj;
 
     if (lineEnd === lineStart) {
       if (callback) {
@@ -40,7 +31,7 @@ const BabylonVisitor = (callback) => {
         return nodeObj;
       }
     } else {
-      return _.range(lineEnd - lineStart + 1).map((i) => {
+      return _.range(lineEnd - lineStart + 1).map(i => {
         const startCol = i === 0 ? columnStart : 0;
         const endCol = i === lineEnd - lineStart ? columnEnd : -1;
         const line = lineStart + i;
@@ -80,7 +71,10 @@ const BabylonVisitor = (callback) => {
       let columnStart;
       let columnEnd;
 
-      if (!lastObj || !firstObj) { console.log(nodes); return; }
+      if (!lastObj || !firstObj) {
+        console.log(nodes);
+        return;
+      }
 
       if (rangeType === 'left') {
         // start of first node until start of last node
@@ -130,13 +124,16 @@ const BabylonVisitor = (callback) => {
       const leftNode = parseNode(left);
       const rightNode = parseNode(right);
 
-      expandMultiLines({
-        type: name,
-        lineStart: leftNode.lineEnd,
-        lineEnd: rightNode.lineStart,
-        columnStart: leftNode.columnEnd,
-        columnEnd: rightNode.columnStart,
-      }, callback);
+      expandMultiLines(
+        {
+          type: name,
+          lineStart: leftNode.lineEnd,
+          lineEnd: rightNode.lineStart,
+          columnStart: leftNode.columnEnd,
+          columnEnd: rightNode.columnStart,
+        },
+        callback
+      );
     }
   };
 
@@ -158,8 +155,11 @@ const BabylonVisitor = (callback) => {
 
       // Expressions inside of template literal
       if (node.expressions) {
-        node.expressions.forEach((expressionNode) => {
-          callback(null, parseNode(expressionNode, `TemplateLiteralExpression`));
+        node.expressions.forEach(expressionNode => {
+          callback(
+            null,
+            parseNode(expressionNode, `TemplateLiteralExpression`)
+          );
         });
       }
     },
@@ -181,23 +181,20 @@ const BabylonVisitor = (callback) => {
       const firstSpecifier = _.first(node.specifiers);
       const lastSpecifier = _.last(node.specifiers);
 
-      parseRange('ImportDeclaration', [
-        node, firstSpecifier,
-      ], 'left');
+      parseRange('ImportDeclaration', [node, firstSpecifier], 'left');
 
       // In between specifiers
       node.specifiers.forEach((specifier, i) => {
         if (node.specifiers[i + 1]) {
-          parseRange('ImportDeclaration', [
-            specifier, node.specifiers[i + 1]
-          ], 'middle');
+          parseRange(
+            'ImportDeclaration',
+            [specifier, node.specifiers[i + 1]],
+            'middle'
+          );
         }
       });
 
-      parseRange('ImportDeclaration', [
-        lastSpecifier, node.source,
-      ], 'middle');
-
+      parseRange('ImportDeclaration', [lastSpecifier, node.source], 'middle');
     },
 
     ImportSpecifier(path) {
@@ -205,10 +202,12 @@ const BabylonVisitor = (callback) => {
       const obj = parseNode(node);
       callback(null, obj);
 
-      if (node.local && node.imported && node.local.start !== node.imported.start) {
-        parseRange('ImportDeclaration', [
-            node.imported, node.local
-        ], 'middle');
+      if (
+        node.local &&
+        node.imported &&
+        node.local.start !== node.imported.start
+      ) {
+        parseRange('ImportDeclaration', [node.imported, node.local], 'middle');
       }
     },
 
@@ -228,20 +227,26 @@ const BabylonVisitor = (callback) => {
 
       if (node.declaration) {
         const decl = parseNode(node.declaration);
-        expandMultiLines({
-          ...obj,
-          ...{
-            lineEnd: decl.lineStart,
-            columnEnd: decl.columnStart,
+        expandMultiLines(
+          {
+            ...obj,
+            ...{
+              lineEnd: decl.lineStart,
+              columnEnd: decl.columnStart,
+            },
           },
-        }, callback);
+          callback
+        );
       } else if (node.specifiers && node.specifiers.length) {
-        expandMultiLines({
-          ...obj,
-          ...{
-            columnEnd: -1,
+        expandMultiLines(
+          {
+            ...obj,
+            ...{
+              columnEnd: -1,
+            },
           },
-        }, callback);
+          callback
+        );
       }
     },
 
@@ -280,7 +285,7 @@ const BabylonVisitor = (callback) => {
       }
 
       if (node.params) {
-        node.params.forEach((param) => {
+        node.params.forEach(param => {
           callback(null, parseNode(param, 'ClassMethodParameter'));
         });
       }
@@ -296,11 +301,11 @@ const BabylonVisitor = (callback) => {
         ...{
           columnEnd: getColumnStart(node.body),
         },
-      })
+      });
 
       // parameters
       if (node.params) {
-        node.params.forEach((param) => {
+        node.params.forEach(param => {
           callback(null, parseNode(param, 'ArrowFunctionParameter'));
         });
       }
@@ -313,19 +318,19 @@ const BabylonVisitor = (callback) => {
         callback(null, {
           ...body,
           ...{
-            type:  'ArrowFunctionBlock',
+            type: 'ArrowFunctionBlock',
             lineEnd: body.lineStart,
             columnEnd: body.columnStart + 1,
-          }
+          },
         });
 
         callback(null, {
           ...body,
           ...{
-            type:  'ArrowFunctionBlock',
+            type: 'ArrowFunctionBlock',
             lineStart: body.lineEnd,
             columnStart: body.columnEnd - 1,
-          }
+          },
         });
       }
     },
@@ -372,14 +377,14 @@ const BabylonVisitor = (callback) => {
       }
 
       if (node.typeParameters) {
-        node.typeParameters.params.forEach((param) => {
+        node.typeParameters.params.forEach(param => {
           callback(null, parseNode(param, 'GenericTypeAnnotationParameter'));
         });
       }
     },
 
     ObjectTypeAnnotation(path) {
-      const node = path.node
+      const node = path.node;
       const obj = parseNode(node);
 
       // Default type
@@ -415,7 +420,8 @@ const BabylonVisitor = (callback) => {
           ...{
             type: 'FunctionDeclarationKeyword',
             lineEnd: obj.lineStart,
-            columnEnd: obj.lineStart === id.lineStart ? getColumnStart(node.id) : -1,
+            columnEnd:
+              obj.lineStart === id.lineStart ? getColumnStart(node.id) : -1,
           },
         });
 
@@ -423,7 +429,7 @@ const BabylonVisitor = (callback) => {
       }
 
       if (node.params) {
-        node.params.forEach((param) => {
+        node.params.forEach(param => {
           expandMultiLines(parseNode(param, 'FunctionArgument'), callback);
         });
       }
@@ -437,13 +443,16 @@ const BabylonVisitor = (callback) => {
         const left = parseNode(node.left);
         const right = parseNode(node.right);
 
-        expandMultiLines({
-          type: 'DefaultArgumentAssignmentOperator',
-          lineStart: left.lineEnd,
-          lineEnd: right.lineStart,
-          columnStart: left.columnEnd,
-          columnEnd: right.columnStart,
-        }, callback);
+        expandMultiLines(
+          {
+            type: 'DefaultArgumentAssignmentOperator',
+            lineStart: left.lineEnd,
+            lineEnd: right.lineStart,
+            columnStart: left.columnEnd,
+            columnEnd: right.columnStart,
+          },
+          callback
+        );
 
         callback(null, parseNode(node.right, 'DefaultArgument'));
       }
@@ -467,7 +476,6 @@ const BabylonVisitor = (callback) => {
           columnEnd,
         },
       });
-
     },
 
     VariableDeclarator(path) {
@@ -489,9 +497,11 @@ const BabylonVisitor = (callback) => {
       },
       exit(path) {
         // Class methods are treated differently
-        if (path.parent &&
-            path.parent.type !== 'ClassMethod' &&
-            path.parent.type !== 'FunctionDeclaration') {
+        if (
+          path.parent &&
+          path.parent.type !== 'ClassMethod' &&
+          path.parent.type !== 'FunctionDeclaration'
+        ) {
           const type = `${path.parent.type}Identifier`;
           callback(null, parseNode(path.node, type));
         }
@@ -510,23 +520,28 @@ const BabylonVisitor = (callback) => {
       const alternate = parseNode(node.alternate);
 
       // ?
-      expandMultiLines({
-        type: 'TernaryOperator',
-        lineStart: test.lineEnd,
-        lineEnd: consequent.lineStart,
-        columnStart: test.columnEnd,
-        columnEnd: consequent.columnStart,
-      }, callback);
+      expandMultiLines(
+        {
+          type: 'TernaryOperator',
+          lineStart: test.lineEnd,
+          lineEnd: consequent.lineStart,
+          columnStart: test.columnEnd,
+          columnEnd: consequent.columnStart,
+        },
+        callback
+      );
 
       // :
-      expandMultiLines({
-        type: 'TernaryOperator',
-        lineStart: consequent.lineEnd,
-        lineEnd: alternate.lineStart,
-        columnStart: consequent.columnEnd,
-        columnEnd: alternate.columnStart,
-      }, callback);
-
+      expandMultiLines(
+        {
+          type: 'TernaryOperator',
+          lineStart: consequent.lineEnd,
+          lineEnd: alternate.lineStart,
+          columnStart: consequent.columnEnd,
+          columnEnd: alternate.columnStart,
+        },
+        callback
+      );
     },
 
     JSXOpeningElement(path) {
@@ -543,7 +558,7 @@ const BabylonVisitor = (callback) => {
       });
 
       if (node.name) {
-        nameObj = parseNode(node.name, 'JSXElementName')
+        nameObj = parseNode(node.name, 'JSXElementName');
         callback(null, nameObj);
       }
 
@@ -553,11 +568,14 @@ const BabylonVisitor = (callback) => {
         lastArg = nameObj;
       }
 
-      expandMultiLines({
-        ...obj,
-        columnStart: lastArg.columnEnd,
-        lineStart: lastArg.lineEnd,
-      }, callback);
+      expandMultiLines(
+        {
+          ...obj,
+          columnStart: lastArg.columnEnd,
+          lineStart: lastArg.lineEnd,
+        },
+        callback
+      );
     },
 
     JSXClosingElement(path) {
@@ -569,11 +587,14 @@ const BabylonVisitor = (callback) => {
         callback(null, nameObj);
 
         // First char of closing element
-        expandMultiLines({
-          ...obj,
-          columnEnd: nameObj.columnStart,
-          lineEnd: nameObj.lineStart,
-        }, callback);
+        expandMultiLines(
+          {
+            ...obj,
+            columnEnd: nameObj.columnStart,
+            lineEnd: nameObj.lineStart,
+          },
+          callback
+        );
 
         // Last char of closing element
         callback(null, {
@@ -591,9 +612,12 @@ const BabylonVisitor = (callback) => {
       callback(null, obj);
 
       if (node.argument && t.isObjectExpression(node.argument)) {
-        expandMultiLines(parseNode(node.argument, 'JSXSpreadAttributeObjectExpression'), callback);
+        expandMultiLines(
+          parseNode(node.argument, 'JSXSpreadAttributeObjectExpression'),
+          callback
+        );
 
-        node.argument.properties.forEach((property) => {
+        node.argument.properties.forEach(property => {
           const propObj = parseNode(property, `${node.type}${property.type}`);
           callback(null, propObj);
         });
@@ -607,11 +631,14 @@ const BabylonVisitor = (callback) => {
       if (node.value) {
         const valueObj = parseNode(node.value, 'JSXAttributeValue');
         // Everything up to attribute value
-        expandMultiLines({
-          ...obj,
-          columnEnd: valueObj.columnStart,
-          lineEnd: valueObj.lineStart,
-        }, callback)
+        expandMultiLines(
+          {
+            ...obj,
+            columnEnd: valueObj.columnStart,
+            lineEnd: valueObj.lineStart,
+          },
+          callback
+        );
 
         // Attribute value
         callback(null, valueObj);
@@ -645,9 +672,8 @@ const BabylonVisitor = (callback) => {
 
       // Expression
       callback(null, parseNode(node.expression, 'JSXExpression'));
-    }
+    },
   };
-
 
   return visitor;
 };
@@ -676,12 +702,14 @@ export default function parse(source, options = {}) {
 
       // Only parse `=>` from tokens for now
       ast.tokens
-        .filter((token) => token.type.label === '=>')
-        .forEach((token) => cb(null, parseNode(token, 'ArrowFunctionExpressionToken')));
+        .filter(token => token.type.label === '=>')
+        .forEach(token =>
+          cb(null, parseNode(token, 'ArrowFunctionExpressionToken'))
+        );
 
       resolve(results);
-    } catch(err) {
+    } catch (err) {
       reject(err);
     }
   });
-};
+}

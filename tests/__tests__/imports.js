@@ -7,9 +7,9 @@ describe('Imports', () => {
 
     test('import declaration (entire import block)', () => {
       testTypes(results, 'ImportDeclaration', [
-          [1, 0, 9],
-          [1, 19, 27],
-          [1, 12, 16],
+        [1, 0, 9],
+        [1, 19, 27],
+        [1, 12, 16],
       ]);
     });
 
@@ -32,22 +32,15 @@ describe('Imports', () => {
     });
 
     test('import declaration (entire import block)', () => {
-      testTypes(results, 'ImportDeclaration', [
-        [1, 0, 7],
-        [1, 10, 16],
-      ]);
+      testTypes(results, 'ImportDeclaration', [[1, 0, 7], [1, 10, 16]]);
     });
 
     test('import specifier (what you are importing)', () => {
-      testTypes(results, 'ImportDefaultSpecifier', [
-        [1, 7, 10],
-      ]);
+      testTypes(results, 'ImportDefaultSpecifier', [[1, 7, 10]]);
     });
 
     test('identifiers within import specifier', () => {
-      testTypes(results, 'ImportDefaultSpecifierIdentifier', [
-        [1, 7, 10],
-      ]);
+      testTypes(results, 'ImportDefaultSpecifierIdentifier', [[1, 7, 10]]);
     });
   });
 
@@ -72,21 +65,17 @@ describe('Imports', () => {
     });
 
     test('import specifier (what you are importing)', () => {
-      testTypes(results, 'ImportSpecifier', [
-          [2, 2, 5],
-          [3, 2, 13],
-          [4, 2, 5],
-      ]);
+      testTypes(results, 'ImportSpecifier', [[2, 2, 5], [3, 2, 13], [4, 2, 5]]);
     });
 
     test('identifiers within import specifier', () => {
       testTypes(results, 'ImportSpecifierIdentifier', [
-          [2, 2, 5],
-          [2, 2, 5],
-          [3, 9, 13],
-          [3, 2, 5],
-          [4, 2, 5],
-          [4, 2, 5],
+        [2, 2, 5],
+        [2, 2, 5],
+        [3, 9, 13],
+        [3, 2, 5],
+        [4, 2, 5],
+        [4, 2, 5],
       ]);
     });
   });

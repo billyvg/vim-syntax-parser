@@ -5,7 +5,7 @@ describe('Strings', () => {
     let results;
     beforeAll(async function() {
       results = await global.parseFile('single-line-string');
-      results = _.filter(results, (result) => result.type === 'StringLiteral');
+      results = _.filter(results, result => result.type === 'StringLiteral');
     });
 
     test('has single line string with double quotes', () => {
@@ -34,10 +34,10 @@ describe('Strings', () => {
     let templateLiterals;
 
     beforeAll(function() {
-      parseFile('template-strings').then((res) => {
+      parseFile('template-strings').then(res => {
         templateLiterals = _.filter(
           res,
-          (result) => result.type === 'TemplateLiteral'
+          result => result.type === 'TemplateLiteral'
         );
 
         results = res;
