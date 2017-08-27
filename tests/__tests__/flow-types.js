@@ -1,5 +1,5 @@
-describe('Flow Types', function() {
-  it('type alias (entire `type` block)', function() {
+describe('Flow Types', () => {
+  test('type alias (entire `type` block)', () => {
     test('simple-flow-type-alias', {
       type: 'TypeAlias',
       lineStart: 1,
@@ -9,7 +9,7 @@ describe('Flow Types', function() {
     });
   });
 
-  it('`type` keyword', function() {
+  test('`type` keyword', () => {
     test('simple-flow-type-alias', {
       type: 'TypeAliasKeyword',
       lineStart: 1,
@@ -19,7 +19,7 @@ describe('Flow Types', function() {
     });
   });
 
-  it('type alias identifier', function() {
+  test('type alias identifier', () => {
     test('simple-flow-type-alias', {
       type: 'TypeAliasIdentifier',
       lineStart: 1,
@@ -29,7 +29,7 @@ describe('Flow Types', function() {
     });
   });
 
-  it('type alias with export', function() {
+  test('type alias with export', () => {
     test('simple-flow-type-alias', {
       type: 'TypeAliasIdentifier',
       lineStart: 1,
@@ -39,13 +39,13 @@ describe('Flow Types', function() {
     });
   });
 
-  describe('built in types', function() {
+  describe('built in types', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('flow-built-in-types');
     });
 
-    it('string', function() {
+    test('string', () => {
       testType(results, 'StringTypeAnnotation', [
         1,
         10,
@@ -53,7 +53,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('number', function() {
+    test('number', () => {
       testType(results, 'NumberTypeAnnotation', [
         2,
         9,
@@ -61,7 +61,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('boolean', function() {
+    test('boolean', () => {
       testType(results, 'BooleanTypeAnnotation', [
         3,
         12,
@@ -69,7 +69,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('null', function() {
+    test('null', () => {
       testType(results, 'NullLiteralTypeAnnotation', [
         4,
         15,
@@ -77,7 +77,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('void', function() {
+    test('void', () => {
       testType(results, 'VoidTypeAnnotation', [
         5,
         12,
@@ -85,7 +85,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('any', function() {
+    test('any', () => {
       testType(results, 'AnyTypeAnnotation', [
         6,
         12,
@@ -93,7 +93,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('mixed', function() {
+    test('mixed', () => {
       testType(results, 'MixedTypeAnnotation', [
         7,
         10,
@@ -102,13 +102,13 @@ describe('Flow Types', function() {
     });
   })
 
-  describe('Arrays', function() {
+  describe('Arrays', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('flow-array');
     });
 
-    it('generic type annotation', function () {
+    test('generic type annotation', () => {
       testType(results, 'GenericTypeAnnotation', [
         1,
         14,
@@ -116,7 +116,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('generic type annotation identifier', function () {
+    test('generic type annotation identifier', () => {
       testType(results, 'GenericTypeAnnotationIdentifier', [
         1,
         14,
@@ -124,22 +124,25 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('generic type annotation parameters (string in Array<string>)', function () {
-      testType(results, 'GenericTypeAnnotationParameter', [
-        1,
-        20,
-        26,
-      ]);
-    });
+    test(
+      'generic type annotation parameters (string in Array<string>)',
+      () => {
+        testType(results, 'GenericTypeAnnotationParameter', [
+          1,
+          20,
+          26,
+        ]);
+      }
+    );
   });
 
-  describe('Objects', function() {
+  describe('Objects', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('flow-object');
     });
 
-    it('type keyword', function() {
+    test('type keyword', () => {
       testType(results, 'TypeAliasKeyword', [
         1,
         0,
@@ -147,7 +150,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('type identifier', function() {
+    test('type identifier', () => {
       testType(results, 'TypeAliasIdentifier', [
         1,
         5,
@@ -155,7 +158,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('object type start bracket', function() {
+    test('object type start bracket', () => {
       testType(results, 'ObjectTypeAnnotationStartBracket', [
         1,
         15,
@@ -163,7 +166,7 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('object type end bracket', function() {
+    test('object type end bracket', () => {
       testType(results, 'ObjectTypeAnnotationEndBracket', [
         7,
         0,
@@ -171,34 +174,34 @@ describe('Flow Types', function() {
       ]);
     });
 
-    it('first object type property (`name: string;`)', function() {
+    test('first object type property (`name: string;`)', () => {
       testType(results, 'ObjectTypeProperty', [2, 2, 15]);
     });
   });
 
-  describe('Objects Inline', function() {
+  describe('Objects Inline', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('flow-object-inline');
     });
 
-    it('type keyword', function() {
+    test('type keyword', () => {
       testType(results, 'TypeAliasKeyword', [ 1, 0, 4, ]);
     });
 
-    it('type identifier', function() {
+    test('type identifier', () => {
       testType(results, 'TypeAliasIdentifier', [ 1, 5, 12, ]);
     });
 
-    it('object type start bracket', function() {
+    test('object type start bracket', () => {
       testType(results, 'ObjectTypeAnnotationStartBracket', [ 1, 15, 16, ]);
     });
 
-    it('object type end bracket', function() {
+    test('object type end bracket', () => {
       testType(results, 'ObjectTypeAnnotationEndBracket', [ 1, 94, 95, ]);
     });
 
-    it('first object type property (`name: string;`)', function() {
+    test('first object type property (`name: string;`)', () => {
       testType(results, 'ObjectTypeProperty', [1, 17, 30]);
     });
   });

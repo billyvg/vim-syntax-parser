@@ -6,8 +6,8 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "dev": "babel src --out-dir lib --watch",
-    "test-watch": "mocha tests/.setup.js tests/__tests__/**.js --compilers js:babel-core/register --watch",
-    "test": "mocha tests/.setup.js tests/__tests__/**.js --compilers js:babel-core/register"
+    "test-watch": "jest --watch",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -41,14 +41,17 @@
     "eslint-plugin-import": "^1.10.3",
     "eslint-plugin-jsx-a11y": "^1.2.0",
     "eslint-plugin-react": "^5.2.2",
-    "mocha": "^2.5.3",
-    "regenerator-runtime": "^0.9.5",
-    "sinon": "^1.17.4",
-    "sinon-chai": "^2.8.0"
+    "jest": "^20.0.4",
+    "regenerator-runtime": "^0.9.5"
   },
   "dependencies": {
     "babel-traverse": "^6.10.4",
     "babylon": "^6.8.4",
     "lodash": "^4.13.1"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/tests/.setup.js"
+    ]
   }
 }

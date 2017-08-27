@@ -1,17 +1,17 @@
-describe('Exports', function() {
-  it('exports default', function() {
+describe('Exports', () => {
+  test('exports default', () => {
     testTypes('export-default', 'ExportDefaultDeclaration', [
         [1, 0, 14],
     ]);
   });
 
-  it('named export', function() {
+  test('named export', () => {
     testTypes('export-named', 'ExportNamedDeclaration', [
         [1, 0, 7],
     ]);
   });
 
-  it('specifiers', function() {
+  test('specifiers', () => {
     // entire export block
     testTypes('export-specifiers', 'ExportNamedDeclaration', [
         [1, 0, -1],
@@ -22,7 +22,7 @@ describe('Exports', function() {
     ]);
   });
 
-  it('export function inline', function() {
+  test('export function inline', () => {
     // entire export block
     testTypes('export-function-inline', 'ExportNamedDeclaration', [
         [1, 0, 7],

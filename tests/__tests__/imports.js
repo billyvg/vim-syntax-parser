@@ -1,11 +1,11 @@
-describe('Imports', function() {
-  describe('Non-default and inline', function() {
+describe('Imports', () => {
+  describe('Non-default and inline', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('import-non-default-inline');
     });
 
-    it('import declaration (entire import block)', function() {
+    test('import declaration (entire import block)', () => {
       testTypes(results, 'ImportDeclaration', [
           [1, 0, 9],
           [1, 19, 27],
@@ -13,11 +13,11 @@ describe('Imports', function() {
       ]);
     });
 
-    it('import specifier (what you are importing)', function() {
+    test('import specifier (what you are importing)', () => {
       testType(results, 'ImportSpecifier', [1, 9, 19]);
     });
 
-    it('identifiers within import specifier', function() {
+    test('identifiers within import specifier', () => {
       testTypes(results, 'ImportSpecifierIdentifier', [
         [1, 16, 19],
         [1, 9, 12],
@@ -25,39 +25,39 @@ describe('Imports', function() {
     });
   });
 
-  describe('Default and inline', function() {
+  describe('Default and inline', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('import-default-inline');
     });
 
-    it('import declaration (entire import block)', function() {
+    test('import declaration (entire import block)', () => {
       testTypes(results, 'ImportDeclaration', [
         [1, 0, 7],
         [1, 10, 16],
       ]);
     });
 
-    it('import specifier (what you are importing)', function() {
+    test('import specifier (what you are importing)', () => {
       testTypes(results, 'ImportDefaultSpecifier', [
         [1, 7, 10],
       ]);
     });
 
-    it('identifiers within import specifier', function() {
+    test('identifiers within import specifier', () => {
       testTypes(results, 'ImportDefaultSpecifierIdentifier', [
         [1, 7, 10],
       ]);
     });
   });
 
-  describe('Multiple', function() {
+  describe('Multiple', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('import-multiple');
     });
 
-    it('import declaration (entire import block)', function() {
+    test('import declaration (entire import block)', () => {
       testTypes(results, 'ImportDeclaration', [
         [1, 0, -1],
         [2, 0, 2],
@@ -71,7 +71,7 @@ describe('Imports', function() {
       ]);
     });
 
-    it('import specifier (what you are importing)', function() {
+    test('import specifier (what you are importing)', () => {
       testTypes(results, 'ImportSpecifier', [
           [2, 2, 5],
           [3, 2, 13],
@@ -79,7 +79,7 @@ describe('Imports', function() {
       ]);
     });
 
-    it('identifiers within import specifier', function() {
+    test('identifiers within import specifier', () => {
       testTypes(results, 'ImportSpecifierIdentifier', [
           [2, 2, 5],
           [2, 2, 5],
@@ -91,7 +91,7 @@ describe('Imports', function() {
     });
   });
 
-  it('default and non-default mixed', function() {
+  test('default and non-default mixed', () => {
     testTypes('import-default-and-non-mixed', 'ImportDeclaration', [
       [1, 0, 7],
       [1, 10, 14],

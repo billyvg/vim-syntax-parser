@@ -1,15 +1,15 @@
 import _ from 'lodash';
 
-describe('Strings', function() {
-  describe('Regular strings', function() {
+describe('Strings', () => {
+  describe('Regular strings', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('single-line-string');
       results = _.filter(results, (result) => result.type === 'StringLiteral');
     });
 
-    it('has single line string with double quotes', function() {
-      expect(results[0]).to.deep.equal({
+    test('has single line string with double quotes', () => {
+      expect(results[0]).toEqual({
         type: 'StringLiteral',
         lineStart: 1,
         lineEnd: 1,
@@ -18,8 +18,8 @@ describe('Strings', function() {
       });
     });
 
-    it('has single line string with single quotes', function() {
-      expect(results[1]).to.deep.equal({
+    test('has single line string with single quotes', () => {
+      expect(results[1]).toEqual({
         type: 'StringLiteral',
         lineStart: 2,
         lineEnd: 2,
@@ -29,11 +29,11 @@ describe('Strings', function() {
     });
   });
 
-  describe('Template strings', function() {
+  describe('Template strings', () => {
     let results;
     let templateLiterals;
 
-    before(function() {
+    beforeAll(function() {
       parseFile('template-strings').then((res) => {
         templateLiterals = _.filter(
           res,
@@ -44,8 +44,8 @@ describe('Strings', function() {
       });
     });
 
-    it('has single line template string', function() {
-      expect(templateLiterals[0]).to.deep.equal({
+    test('has single line template string', () => {
+      expect(templateLiterals[0]).toEqual({
         type: 'TemplateLiteral',
         lineStart: 1,
         lineEnd: 1,
@@ -54,8 +54,8 @@ describe('Strings', function() {
       });
     });
 
-    it('has interpolated template string', function() {
-      expect(templateLiterals[1]).to.deep.equal({
+    test('has interpolated template string', () => {
+      expect(templateLiterals[1]).toEqual({
         type: 'TemplateLiteral',
         lineStart: 2,
         lineEnd: 2,
@@ -64,7 +64,7 @@ describe('Strings', function() {
       });
     });
 
-    it('expressions inside of template string', function() {
+    test('expressions inside of template string', () => {
       testTypes(results, 'TemplateLiteralExpression', [
         [2, 19, 22],
         [3, 23, 40],
@@ -72,8 +72,8 @@ describe('Strings', function() {
       ]);
     });
 
-    it('multiline template string', function() {
-      expect(templateLiterals[4]).to.deep.equal({
+    test('multiline template string', () => {
+      expect(templateLiterals[4]).toEqual({
         type: 'TemplateLiteral',
         lineStart: 6,
         lineEnd: 6,
@@ -81,7 +81,7 @@ describe('Strings', function() {
         columnEnd: -1,
       });
 
-      expect(templateLiterals[5]).to.deep.equal({
+      expect(templateLiterals[5]).toEqual({
         type: 'TemplateLiteral',
         lineStart: 7,
         lineEnd: 7,
@@ -89,7 +89,7 @@ describe('Strings', function() {
         columnEnd: -1,
       });
 
-      expect(templateLiterals[6]).to.deep.equal({
+      expect(templateLiterals[6]).toEqual({
         type: 'TemplateLiteral',
         lineStart: 8,
         lineEnd: 8,
@@ -97,7 +97,7 @@ describe('Strings', function() {
         columnEnd: -1,
       });
 
-      expect(templateLiterals[7]).to.deep.equal({
+      expect(templateLiterals[7]).toEqual({
         type: 'TemplateLiteral',
         lineStart: 9,
         lineEnd: 9,

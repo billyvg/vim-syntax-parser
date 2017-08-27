@@ -1,11 +1,11 @@
-describe('Class', function() {
-  describe('Basic class', function() {
+describe('Class', () => {
+  describe('Basic class', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await global.parseFile('class');
     });
 
-    it('class methods', function() {
+    test('class methods', () => {
       testTypes(results, 'ClassMethodIdentifier', [
           [2, 2, 13],
           [7, 2, 5],
@@ -13,7 +13,7 @@ describe('Class', function() {
       ]);
     });
 
-    it('class method parameters', function() {
+    test('class method parameters', () => {
       testTypes(results, 'ClassMethodParameter', [
           [2, 14, 26],
           [7, 6, 15],
@@ -22,7 +22,7 @@ describe('Class', function() {
     });
   });
 
-  it('class method decorator with argument', function() {
+  test('class method decorator with argument', () => {
     testTypes('class-method-decorator-with-argument', 'DecoratorArguments', [
         [2, 13, 21],
     ]);

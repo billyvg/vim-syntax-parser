@@ -1,12 +1,12 @@
-describe('JSX', function() {
-  it('opening element', function() {
+describe('JSX', () => {
+  test('opening element', () => {
     testTypes('jsx-with-children', 'JSXOpeningElement', [
         [3, 4, 5],
         [3, 29, 30],
     ]);
   });
 
-  it('multiline opening element', function() {
+  test('multiline opening element', () => {
     testTypes('jsx-with-children-multiline', 'JSXOpeningElement', [
         [3, 4, 5],
         [5, 26, -1],
@@ -14,14 +14,14 @@ describe('JSX', function() {
     ]);
   });
 
-  it('closing element', function() {
+  test('closing element', () => {
     testTypes('jsx-with-children', 'JSXClosingElement', [
         [5, 4, 6],
         [5, 9, 10],
     ]);
   });
 
-  it('multiline closing element', function() {
+  test('multiline closing element', () => {
     testTypes('jsx-with-children-multiline', 'JSXClosingElement', [
         [8, 4, -1],
         [9, 0, 6],
@@ -29,7 +29,7 @@ describe('JSX', function() {
     ]);
   });
 
-  it('self-closing closing element', function() {
+  test('self-closing closing element', () => {
     testTypes('jsx-with-props', 'JSXOpeningElement', [
         [5, 4, 5],
         [8, 15, -1],
@@ -37,20 +37,20 @@ describe('JSX', function() {
     ]);
   });
 
-  it('tag name', function() {
+  test('tag name', () => {
     testTypes('jsx-with-children', 'JSXElementName', [
         [3, 5, 8],
         [5, 6, 9],
     ]);
   });
 
-  describe('spread attributes', function() {
+  describe('spread attributes', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await parseFile('jsx-spread-props');
     });
 
-    it('spread attributes, entire object expression', function() {
+    test('spread attributes, entire object expression', () => {
       testTypes(results, 'JSXSpreadAttributeObjectExpression', [
           [4, 10, -1],
           [5, 0, -1],
@@ -60,13 +60,13 @@ describe('JSX', function() {
       ]);
     });
 
-    it('spread attributes with spread object property', function() {
+    test('spread attributes with spread object property', () => {
       testTypes(results, 'JSXSpreadAttributeSpreadProperty', [
           [5, 9, 22],
       ]);
     });
 
-    it('spread attributes, normal object properties', function() {
+    test('spread attributes, normal object properties', () => {
       testTypes(results, 'JSXSpreadAttributeObjectProperty', [
           [6, 9, 30],
           [7, 9, 17],
@@ -74,13 +74,13 @@ describe('JSX', function() {
     });
   });
 
-  describe('attributes', function() {
+  describe('attributes', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await parseFile('jsx-with-props');
     });
 
-    it('attribute with value and no value', function() {
+    test('attribute with value and no value', () => {
       testTypes(results, 'JSXAttribute', [
           [6, 6, 16],
           [7, 6, 10],
@@ -88,19 +88,19 @@ describe('JSX', function() {
       ]);
     });
 
-    it('expression container start', function() {
+    test('expression container start', () => {
       testTypes(results, 'JSXExpressionContainerStart', [
           [6, 16, 17],
       ]);
     });
 
-    it('expression container end', function() {
+    test('expression container end', () => {
       testTypes(results, 'JSXExpressionContainerEnd', [
           [6, 19, 20],
       ]);
     });
 
-    it('attribute value + expression', function() {
+    test('attribute value + expression', () => {
       testTypes(results, 'JSXExpression', [
           [6, 17, 19],
       ]);

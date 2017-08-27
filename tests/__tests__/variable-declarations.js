@@ -1,5 +1,5 @@
-describe('Variable Declarations', function() {
-  it('identifies `var` declarations', function() {
+describe('Variable Declarations', () => {
+  test('identifies `var` declarations', () => {
     test('var-declaration', {
       type: 'VariableDeclaration',
       lineStart: 1,
@@ -9,7 +9,7 @@ describe('Variable Declarations', function() {
     });
   });
 
-  it('identifies `const` declarations', function() {
+  test('identifies `const` declarations', () => {
     test('const-declaration', {
       type: 'VariableDeclaration',
       lineStart: 1,
@@ -19,7 +19,7 @@ describe('Variable Declarations', function() {
     });
   });
 
-  it('identifies `let` declarations', function() {
+  test('identifies `let` declarations', () => {
     test('let-declaration', {
       type: 'VariableDeclaration',
       lineStart: 1,

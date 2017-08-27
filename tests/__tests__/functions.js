@@ -1,23 +1,23 @@
-describe('Functions', function() {
-  describe('single-line', function() {
+describe('Functions', () => {
+  describe('single-line', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await parseFile('function-declaration');
     });
 
-    it('function declaration keyword', function() {
+    test('function declaration keyword', () => {
       testTypes(results, 'FunctionDeclarationKeyword', [
           [1, 0, 8],
       ]);
     });
 
-    it('function declaration identifier (name)', function() {
+    test('function declaration identifier (name)', () => {
       testTypes(results, 'FunctionDeclarationIdentifier', [
           [1, 9, 12],
       ]);
     });
 
-    it('default arguments', function() {
+    test('default arguments', () => {
       testTypes(results, 'FunctionArgument', [
           [1, 13, 25],
           [1, 27, 46],
@@ -25,46 +25,46 @@ describe('Functions', function() {
       ]);
     });
 
-    it('default arguments assignment operator', function() {
+    test('default arguments assignment operator', () => {
       testTypes(results, 'DefaultArgumentAssignmentOperator', [
           [1, 16, 19],
           [1, 31, 32],
       ]);
     });
 
-    it('default arguments value', function() {
+    test('default arguments value', () => {
       testTypes(results, 'DefaultArgument', [
           [1, 19, 25],
           [1, 32, 46],
       ]);
     });
 
-    it('return statement', function() {
+    test('return statement', () => {
       testTypes(results, 'ReturnKeyword', [
         [2, 2, 9],
       ]);
     });
   });
 
-  describe('multi-line', function() {
+  describe('multi-line', () => {
     let results;
-    before(async function() {
+    beforeAll(async function() {
       results = await parseFile('function-declaration-multiline');
     });
 
-    it('function declaration keyword', function() {
+    test('function declaration keyword', () => {
       testTypes(results, 'FunctionDeclarationKeyword', [
           [1, 0, -1],
       ]);
     });
 
-    it('function declaration identifier (name)', function() {
+    test('function declaration identifier (name)', () => {
       testTypes(results, 'FunctionDeclarationIdentifier', [
           [2, 2, 5],
       ]);
     });
 
-    it('default arguments', function() {
+    test('default arguments', () => {
       testTypes(results, 'FunctionArgument', [
           [3, 4, -1],
           [4, 0, 14],
@@ -74,7 +74,7 @@ describe('Functions', function() {
       ]);
     });
 
-    it('default arguments assignment operator', function() {
+    test('default arguments assignment operator', () => {
       testTypes(results, 'DefaultArgumentAssignmentOperator', [
           [3, 7, -1],
           [4, 0, 8],

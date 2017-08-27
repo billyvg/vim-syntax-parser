@@ -1,12 +1,12 @@
-describe('Ternary', function() {
-  it('special chars (? and :)', function() {
+describe('Ternary', () => {
+  test('special chars (? and :)', () => {
     testTypes('ternary', 'TernaryOperator', [
         [1, 21, 24],
         [1, 29, 32],
     ]);
   });
 
-  it('multiline - special chars (? and :)', function() {
+  test('multiline - special chars (? and :)', () => {
     testTypes('ternary-multiline', 'TernaryOperator', [
         [1, 21, -1],
         [2, 0, 2],

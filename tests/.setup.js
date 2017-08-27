@@ -1,29 +1,10 @@
-'use strict';
-
-const regeneratorRuntime = require('regenerator-runtime/runtime');
-
-require('babel-register')({
-  presets: ['es2015', 'stage-1'],
-  plugins: [
-    'transform-decorators-legacy',
-    'syntax-async-functions',
-    'transform-regenerator'
-  ],
-});
-
-const _ = require('lodash');
 const fs = require('fs');
 const p = require('path');
-const chai = require('chai');
-chai.use(require('sinon-chai'));
 
 const read = fileName => fs.readFileSync(
   p.join(__dirname, 'templates', fileName),
   'utf8'
 );
-
-const expect = chai.expect;
-global.expect = expect;
 
 const _test = (testFileName, options, fakeOptions) => {
   const source = read(testFileName + '.js');
@@ -42,7 +23,7 @@ global.parseFile = (testFilename, options) => {
 
 global.test = (testFileName, expectedResults, options) => {
   return _test(testFileName, options).then((results) => {
-    if (_.isArray(expectedResults)) {
+    if (Array.isArray(expectedResults)) {
       expectedResults.forEach((expectedResult) => {
         expect(result).to.include(expectedResult);
       });
@@ -53,11 +34,11 @@ global.test = (testFileName, expectedResults, options) => {
 };
 
 global.findType = (results, type) => {
-  return _.find(results, (r) => r.type === type);
+  return results.find(r => r.type === type);
 };
 
 global.findTypes = (results, type) => {
-  return _.filter(results, (r) => r.type === type);
+  return results.filter((r) => r.type === type);
 };
 
 global.testEqual = (testFileName, type, expectedResult, options) => {
@@ -68,7 +49,7 @@ global.testEqual = (testFileName, type, expectedResult, options) => {
     _results = _test(testFileName, expectedResult).then((results) => {
       expect(
         results
-      ).to.deep.equal(_expected);
+      ).toEqual(_expected);
     });
   } else {
     _results = findType(
@@ -83,7 +64,7 @@ global.testEqual = (testFileName, type, expectedResult, options) => {
 
     expect(
       _results
-    ).to.deep.equal(_expected);
+    ).toEqual(_expected);
   }
 
 };
@@ -112,7 +93,7 @@ global.testType = (results, type, expectedResult, options) => {
 
   expect(
     findType(results, type)
-  ).to.deep.equal(expected);
+  ).toEqual(expected);
 };
 
 global.testTypes = (results, type, expectedResults, options) => {
@@ -141,7 +122,7 @@ global.testTypes = (results, type, expectedResults, options) => {
 
     expect(
       findTypes(results, type)
-    ).to.deep.equal(expected);
+    ).toEqual(expected);
   };
 
   if (typeof results === 'string') {

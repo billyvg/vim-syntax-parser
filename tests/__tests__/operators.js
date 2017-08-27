@@ -1,11 +1,11 @@
-describe('Operators', function() {
-  it('assignment', function() {
+describe('Operators', () => {
+  test('assignment', () => {
     testTypes('assignment-operator', 'AssignmentOperator', [
         [1, 9, 12],
     ]);
   });
 
-  it('assignment multiline', function() {
+  test('assignment multiline', () => {
     testTypes('assignment-operator-multiline', 'AssignmentOperator', [
         [1, 9, -1],
         [2, 0, -1],
@@ -16,7 +16,7 @@ describe('Operators', function() {
     ]);
   });
 
-  it('logical operator', function() {
+  test('logical operator', () => {
     testTypes('logical-operator', 'LogicalOperator', [
         // Affected by order of operations
         [1, 13, 17],
@@ -24,7 +24,7 @@ describe('Operators', function() {
     ]);
   })
 
-  it('binary operator', function() {
+  test('binary operator', () => {
     testTypes('binary-operator', 'BinaryOperator', [
         // Affected by order of operations
         [1, 13, 16],
