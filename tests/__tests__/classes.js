@@ -22,6 +22,23 @@ describe('Class', () => {
     });
   });
 
+  test('class decorator', () => {
+    testTypes('class-decorator', 'Decorator', [[1, 0, 10]]);
+  });
+
+  test('class decorator with object arg', async () => {
+    await testTypes('class-decorator-with-obj-arg', 'Decorator', [
+      [1, 0, -1],
+      [2, 0, -1],
+      [3, 0, 2],
+    ]);
+    await testTypes('class-decorator-with-obj-arg', 'DecoratorArguments', [
+      [1, 11, -1],
+      [2, 0, -1],
+      [3, 0, 1],
+    ]);
+  });
+
   test('class method decorator with argument', () => {
     testTypes('class-method-decorator-with-argument', 'DecoratorArguments', [
       [2, 13, 21],

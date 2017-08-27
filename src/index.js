@@ -254,7 +254,7 @@ const BabylonVisitor = callback => {
       const node = path.node;
       const obj = parseNode(node);
 
-      callback(null, obj);
+      expandMultiLines(obj, callback);
 
       // If `expression` is a `CallExpression`, then group all args as a type
       if (t.isCallExpression(node.expression)) {

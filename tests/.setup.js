@@ -126,11 +126,8 @@ global.testTypes = (results, type, expectedResults, options) => {
   };
 
   if (typeof results === 'string') {
-    parseFile(results).then(compare);
+    return parseFile(results).then(compare);
   } else {
-    compare(results);
+    return compare(results);
   }
-
-
-
 };
